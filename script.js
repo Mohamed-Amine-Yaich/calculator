@@ -31,24 +31,28 @@ let firstDisplayedValue = 0;
 let secondDisplayedValue = 0;
 let operation = "";
 let result = 0;
+let clearAfterEnter = false;
+
 const display = value => {
-  if (value == "ERROR") {
-    output.textContent = "ERROR";
-    firstDisplayedValue = 0;
-    secondDisplayedValue = 0;
-    operation = "";
-  } else {
-    output.textContent =
-      output.textContent != 0 ? output.textContent + value : value;
-    if (["+", "-", "*", "/"].includes(value)) return;
-    if (!operation) {
-      firstDisplayedValue =
-        firstDisplayedValue != 0 ? firstDisplayedValue + value : value;
-    }
-    if (operation) {
-      secondDisplayedValue =
-        secondDisplayedValue != 0 ? secondDisplayedValue + value : value;
-    }
+  if (output.textContent == "Error" || clearAfterEnter) {
+    output.textContent = 0;
+    result = 0;
+    clearAfterEnter = false;
+  }
+
+  output.textContent =
+    output.textContent != 0 ? output.textContent + value : value;
+};
+
+const assignValues = value => {
+  if (["+", "-", "*", "/"].includes(value)) return;
+  if (!operation) {
+    firstDisplayedValue =
+      firstDisplayedValue != 0 ? firstDisplayedValue + value : value;
+  }
+  if (operation) {
+    secondDisplayedValue =
+      secondDisplayedValue != 0 ? secondDisplayedValue + value : value;
   }
 
   console.log(firstDisplayedValue, secondDisplayedValue);
@@ -59,6 +63,9 @@ const numbers = document.querySelectorAll(".number");
 numbers.forEach(num => {
   num.addEventListener("click", () => {
     display(num.value);
+    assignValues(num.value);
+
+    //assignValues
   });
 });
 //listen for opertion events
@@ -66,7 +73,10 @@ const operations = [...document.querySelectorAll(".calculator__key--operator")];
 
 operations.forEach(btn => {
   btn.addEventListener("click", () => {
-    result ? (firstDisplayedValue = result) : null;
+    //specie l'operation
+    //if operation then calc result and add new operation
+
+    result && result != Infinity ? (firstDisplayedValue = result) : null;
 
     if (secondDisplayedValue && operation) {
       result = operate(
@@ -74,7 +84,11 @@ operations.forEach(btn => {
         parseFloat(firstDisplayedValue),
         parseFloat(secondDisplayedValue)
       );
-      output.textContent = result;
+
+      if (result == (Infinity || NaN)) {
+        output.textContent = "Error";
+      } else output.textContent = result;
+      firstDisplayedValue = 0;
       secondDisplayedValue = 0;
       operation = "";
     }
@@ -86,23 +100,45 @@ operations.forEach(btn => {
       operation = btn.value;
       display(btn.value);
     }
+
+    console.log(
+      "afterOperation",
+      firstDisplayedValue,
+      secondDisplayedValue,
+      operation,
+      result
+    );
   });
 });
 //listen action on =
 const enter = document.querySelector(".calculator__key--enter");
 enter.addEventListener("click", () => {
+  result && result != Infinity ? (firstDisplayedValue = result) : null;
+
   if (secondDisplayedValue && operation) {
     result = operate(
       operation,
       parseFloat(firstDisplayedValue),
       parseFloat(secondDisplayedValue)
     );
-
-    output.textContent = result == Infinity ? "Error" : result;
+    console.log("result", result);
+    if (result == (Infinity || NaN)) {
+      output.textContent = "Error";
+    } else {
+      output.textContent = result;
+      clearAfterEnter = true;
+    }
     firstDisplayedValue = 0;
     secondDisplayedValue = 0;
     operation = "";
   }
+  console.log(
+    "afterenter",
+    firstDisplayedValue,
+    secondDisplayedValue,
+    operation,
+    result
+  );
 });
 
 //backspace
@@ -133,4 +169,5 @@ clear.addEventListener("click", () => {
   firstDisplayedValue = 0;
   secondDisplayedValue = 0;
   operation = "";
+  result = 0;
 });
