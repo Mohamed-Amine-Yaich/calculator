@@ -110,8 +110,11 @@ operations.forEach(btn => {
           parseFloat(firstDisplayedValue),
           parseFloat(secondDisplayedValue)
         ).toFixed(4) * 1;
-      if (result == Infinity || result == NaN) {
+      if (!isFinite(result)) {
         output.textContent = "Error";
+        //if error disable all bts exept Ac
+        operations.forEach(op => (op.disabled = true));
+        numbers.forEach(num => (num.disabled = true));
       } else {
         output.textContent = result;
       }
@@ -162,8 +165,11 @@ enter.addEventListener("click", () => {
       ).toFixed(4) * 1;
 
     console.log("result", result);
-    if (result == (Infinity || NaN)) {
+    if (!isFinite(result)) {
       output.textContent = "Error";
+      //desabel all input exept Ac
+      operations.forEach(op => (op.disabled = true));
+      numbers.forEach(num => (num.disabled = true));
     } else {
       output.textContent = result;
       clearAfterEnter = true;
@@ -211,6 +217,8 @@ backspace.addEventListener("click", () => {
   if (clearAfterEnter || output.textContent == "Error") {
     output.textContent = 0;
     result = 0;
+    operations.forEach(op => (op.disabled = false));
+    numbers.forEach(num => (num.disabled = false));
     return;
   }
 
@@ -235,6 +243,8 @@ backspace.addEventListener("click", () => {
 const clear = document.querySelector(".clear");
 
 clear.addEventListener("click", () => {
+  operations.forEach(op => (op.disabled = false));
+  numbers.forEach(num => (num.disabled = false));
   output.textContent = 0;
   firstDisplayedValue = 0;
   secondDisplayedValue = 0;
