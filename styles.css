@@ -17,6 +17,13 @@
   padding-inline-end: 1.25rem;
   text-align: end;
 }
+.calculator_output_screen {
+  background-color: hsl(208, 25%, 86%);
+  overflow: hidden;
+  border-radius: 10px;
+  width: 93%;
+  margin-left: auto;
+}
 .calculator__keys {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

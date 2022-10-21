@@ -24,7 +24,7 @@ const operate = (operator, a, b) => {
   }
 };
 
-const output = document.querySelector(".calculator__output");
+const output = document.querySelector(".calculator_output_screen");
 let firstDisplayedValue = 0;
 let secondDisplayedValue = 0;
 let operation = "";
@@ -37,7 +37,6 @@ let clearAfterEnter = false;
 //check if there is an error or a result then start from 0
 //else it will concatinate value
 const display = value => {
-  /** */
   if (
     output.textContent == "Error" ||
     (clearAfterEnter &&
@@ -98,29 +97,13 @@ const operations = [...document.querySelectorAll(".calculator__key--operator")];
 operations.forEach(btn => {
   btn.addEventListener("click", () => {
     //check for previous result for assign the first operand
-    if (result /* && result != Infinity */) firstDisplayedValue = result;
+    if (result) firstDisplayedValue = result;
 
     //check if the user have a previous calculation that not done
     //make the old cal ,display it or the error msg
     //and then restart operands and variables
     if (secondDisplayedValue && operation) {
-      result =
-        operate(
-          operation,
-          parseFloat(firstDisplayedValue),
-          parseFloat(secondDisplayedValue)
-        ).toFixed(4) * 1;
-      if (!isFinite(result)) {
-        output.textContent = "Error";
-        //if error disable all bts exept Ac
-        operations.forEach(op => (op.disabled = true));
-        numbers.forEach(num => (num.disabled = true));
-      } else {
-        output.textContent = result;
-      }
-      firstDisplayedValue = 0;
-      secondDisplayedValue = 0;
-      operation = "";
+      calcAndDisplayResult();
     }
 
     //we got here by pressing on an operator means that
@@ -157,26 +140,11 @@ enter.addEventListener("click", () => {
   //check for operation and 2nd operand
 
   if (secondDisplayedValue && operation) {
-    result =
-      operate(
-        operation,
-        parseFloat(firstDisplayedValue),
-        parseFloat(secondDisplayedValue)
-      ).toFixed(4) * 1;
-
-    console.log("result", result);
-    if (!isFinite(result)) {
-      output.textContent = "Error";
-      //desabel all input exept Ac
-      operations.forEach(op => (op.disabled = true));
-      numbers.forEach(num => (num.disabled = true));
-    } else {
-      output.textContent = result;
+    calcAndDisplayResult();
+    console.log(result);
+    if (isFinite(result)) {
       clearAfterEnter = true;
     }
-    firstDisplayedValue = 0;
-    secondDisplayedValue = 0;
-    operation = "";
   }
   console.log(
     "afterenter",
@@ -188,11 +156,21 @@ enter.addEventListener("click", () => {
 });
 
 //for simplify
-const calcAndDisplayResult = (op, FirstOperand, secondOperand) => {
-  result = operate(op, parseFloat(FirstOperand), parseFloat(secondOperand));
-  result == (Infinity || NaN)
-    ? (output.textContent = "Error")
-    : (output.textContent = result);
+const calcAndDisplayResult = () => {
+  result =
+    operate(
+      operation,
+      parseFloat(firstDisplayedValue),
+      parseFloat(secondDisplayedValue)
+    ).toFixed(4) * 1;
+  if (!isFinite(result)) {
+    output.textContent = "Error";
+    //if error disable all bts exept Ac
+    operations.forEach(op => (op.disabled = true));
+    numbers.forEach(num => (num.disabled = true));
+  } else {
+    output.textContent = result;
+  }
   firstDisplayedValue = 0;
   secondDisplayedValue = 0;
   operation = "";
