@@ -48,6 +48,19 @@ const display = value => {
     result = 0;
     clearAfterEnter = false;
   }
+  [...output.textContent].forEach(str => {
+    if (["*", "/", "-", "+"].includes(str)) operation = str;
+  });
+
+  //check for the . for display or not
+  if (value == ".") {
+    if (operation) {
+      if (output.textContent.split(operation)[1].indexOf(".") > -1)
+        return "error";
+    } else {
+      if (output.textContent.indexOf(".") > -1) return "error";
+    }
+  }
 
   if (output.textContent == 0) {
     if (value == ".") {
@@ -87,8 +100,10 @@ const assignValues = value => {
 const numbers = document.querySelectorAll(".number");
 numbers.forEach(num => {
   num.addEventListener("click", () => {
-    display(num.value);
-    assignValues(num.value);
+    const displayReturn = display(num.value);
+    console.log("displayReturn", displayReturn);
+    if (displayReturn != "error") assignValues(num.value);
+    console.log(firstDisplayedValue, secondDisplayedValue);
   });
 });
 
